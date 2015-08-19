@@ -29,18 +29,13 @@ class PublishCollectTask extends PluginTask{
         }
     }
     public function collectData(Player $player, $namespace){
+        $out = [];
         foreach($this->data as $address => $players){
-            foreach($players as $playerName => $namespaces) {
-                if ($playerName === $player->getName()) {
-                    foreach ($namespaces as $namespaceName => $value){
-                        if($namespaceName === $namespace){
-                            unset($this->data[$address][$playerName][$namespaceName]);
-                            return $value;
-                        }
-                    }
-                }
+            if(isset($players[$player->getName()]) && isset($players[$player->getName()][$namespace])){
+                $out[$address] = $players[$player->getName()][$namespace];
+                unset($this->data[$address][$player->getName()][$namespace]);
             }
         }
-        return null;
+        return $out;
     }
 }

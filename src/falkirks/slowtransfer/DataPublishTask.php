@@ -36,25 +36,29 @@ class DataPublishTask extends AsyncTask{
      */
     public function onRun(){
         $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
-        $result = socket_connect($socket, $this->address, $this->applicationPort);
-        socket_write($socket, SlowTransfer::PROTOCOL_IDENTIFIER . "\n");
-        socket_write($socket, "PUBLISH\n");
-        socket_write($socket, $this->player . "\n");
-        $data = unserialize($this->data);
-        foreach($data as $namespace => $value){
-            $value = serialize($value);
-            socket_write($socket, "$namespace\n");
-            socket_write($socket, strlen($value) . "\n");
-            socket_write($socket, $value);
-        }
-        socket_write($socket, "STOP\n");
-        if(socket_read($socket, 128, PHP_NORMAL_READ) === SlowTransfer::PROTOCOL_IDENTIFIER){
-            if(socket_read($socket, 64, PHP_NORMAL_READ) === "WAITING"){
-                $this->success = true;
+        if($socket !== false) {
+            $result = socket_connect($socket, $this->address, $this->applicationPort);
+            if($result !== false) {
+                socket_write($socket, SlowTransfer::PROTOCOL_IDENTIFIER . "\n");
+                socket_write($socket, "PUBLISH\n");
+                socket_write($socket, $this->player . "\n");
+                $data = unserialize($this->data);
+                foreach ($data as $namespace => $value) {
+                    $value = serialize($value);
+                    socket_write($socket, "$namespace\n");
+                    socket_write($socket, strlen($value) . "\n");
+                    socket_write($socket, $value);
+                }
+                socket_write($socket, "STOP\n");
+                if (socket_read($socket, 128, PHP_NORMAL_READ) === SlowTransfer::PROTOCOL_IDENTIFIER) {
+                    if (socket_read($socket, 64, PHP_NORMAL_READ) === "WAITING") {
+                        $this->success = true;
+                    }
+                }
             }
+            @socket_shutdown($socket);
+            socket_close($socket);
         }
-        @socket_shutdown($socket);
-        socket_close($socket);
     }
 
     public function onCompletion(Server $server){

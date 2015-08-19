@@ -16,6 +16,9 @@ class TransferStore implements Listener{
         $this->plugin->getServer()->getPluginManager()->registerEvents($this, $this->plugin);
     }
     public function set(Player $player, $namespace, $value){
+        if(!isset($this->store[$player->getName()])){
+            $this->store[$player->getName()] = [];
+        }
         $this->store[$player->getName()][$namespace] = $value;
     }
     public function get(Player $player, $namespace){

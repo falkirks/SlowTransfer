@@ -20,7 +20,7 @@ class ServerTask extends Thread{
         $this->publishData = serialize([]);
         try {
             $this->sock = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
-            //socket_set_option ($this->sock, SOL_SOCKET, SO_REUSEADDR, 1);
+            socket_set_option($this->sock, SOL_SOCKET, SO_REUSEADDR, 1);
             socket_bind($this->sock, "0.0.0.0", $this->config->get("application-port"));
             socket_listen($this->sock, 5);
             socket_set_block($this->sock);
