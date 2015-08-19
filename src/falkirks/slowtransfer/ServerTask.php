@@ -56,7 +56,7 @@ class ServerTask extends Thread{
                                 $length = rtrim(@socket_read($msgsock, 32, PHP_NORMAL_READ));
                                 if ($length) {
                                     $buf = @socket_read($msgsock, $length, PHP_BINARY_READ);
-                                    $publishData[$address][$player][$namespace][] = $buf;
+                                    $publishData[$address][$player][$namespace][] = unserialize($buf);
                                 }
                                 else{
                                     break;

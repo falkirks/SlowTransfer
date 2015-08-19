@@ -9,3 +9,4 @@
 application-port: 8181
   # This port will be used to run the server
   # on and to contact other servers.
+publish-collect-task-int: 5
